@@ -1,0 +1,8 @@
+Input
+If number of Infections = 0 Then
+Print
+Else
+do
+Print
+Loop
+end If
