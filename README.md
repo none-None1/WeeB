@@ -8,7 +8,7 @@ The repository includesWBC, a compiler (transpiler to C) for Weeeeeeeeeeeeeeeeee
 ## WBC
 WBC is the compiler from WeeB/WeeB++ to C, you can use it to compile code, then use a C compiler to compile the generated code.
 
-You can also call WBC from C++ by linking weebasic.lib and call the `generate` function:
+You can also call WBC from C++ by linking `weebasic.lib (libweebasic.a)` and include `WeeB.h` and call the `generate` function:
 ```cpp
 string generate(string code, generate_flags flags, vector<generate_error>& err);
 ```
