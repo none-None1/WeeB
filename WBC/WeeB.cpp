@@ -16,6 +16,7 @@ void adderr(vector<generate_error>& err, int errline, string errmsg) {
 	generate_error e;
 	e.line = errline;
 	e.errmsg = errmsg;
+	err.push_back(e);
 }
 void indent(string& s, string x,int indentation) {
 	for (int i = 0; i < indentation; i++) s += "\t";
@@ -194,12 +195,11 @@ string generate(string code, generate_flags flags, vector<generate_error> &err )
 				adderr(err, lineno, "Syntax error");
 			}
 			else {
-				string op = vals[4];
+				string op = vals[5];
 				if (op == "<>") op = "!=";
 				if (op == "=") op = "==";
 				if (!indentation) adderr(err, lineno, "Loop does not match do");
-				indent(result, "while(x" + op + vals[5] + ");", indentation);
-				--indentation;
+				else --indentation,indent(result, "}while(x" + op + vals[6] + ");", indentation);
 			}
 		}
 		else {
