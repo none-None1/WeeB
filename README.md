@@ -3,7 +3,7 @@
 
 WeeB, also known as [WeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeBasic](https://esolangs.org/wiki/WeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeBasic), is an esoteric language that is like BASIC and is derived from [Weeeeeeeeeeeeeeeeeeeeeeeeeeeeee](https://esolangs.org/wiki/Weeeeeeeeeeeeeeeeeeeeeeeeeeeeee).
 
-The repository includesWBC, a compiler (transpiler to C) for WeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeBasic and its derivative, WeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeBasic++, and some examples.
+The repository includes WBC, a compiler (transpiler to C) for WeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeBasic and its derivative, WeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeBasic++, and some examples.
 
 ## WBC
 WBC is the compiler from WeeB/WeeB++ to C, you can use it to compile code, then use a C compiler to compile the generated code.

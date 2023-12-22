@@ -1,6 +1,4 @@
-﻿// WBC.cpp: 定义应用程序的入口点。
-//
-#include "WBC.h"
+﻿#include "WBC.h"
 #include<fstream>
 #include<set>
 #include<string>

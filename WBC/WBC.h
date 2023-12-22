@@ -1,5 +1,4 @@
-﻿#pragma once
-#ifndef WBC_H
+﻿#ifndef WBC_H
 #define WBC_H
 #include <iostream>
 #include "WeeB.h"
