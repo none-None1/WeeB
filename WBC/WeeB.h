@@ -14,6 +14,8 @@ using std::transform;
 struct generate_flags {
 	bool comment;
 	bool plus;
+	bool minimize;
+	bool accept_elvm;
 };
 struct generate_error {
 	int line;

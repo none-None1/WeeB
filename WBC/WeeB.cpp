@@ -18,7 +18,11 @@ void adderr(vector<generate_error>& err, int errline, string errmsg) {
 	e.errmsg = errmsg;
 	err.push_back(e);
 }
-void indent(string& s, string x,int indentation) {
+void indent(string& s, string x,int indentation,bool minimize) {
+	if (minimize) {
+		s += x;
+		return;
+	}
 	for (int i = 0; i < indentation; i++) s += "\t";
 	s += x + "\n";
 }
@@ -47,10 +51,18 @@ string generate(string code, generate_flags flags, vector<generate_error> &err )
 	vector<string> lines,vals;
 	int indentation = 1;
 	if (flags.plus) {
-		result += "#include<stdio.h>\n#define x tape[p]\nunsigned char tape[1000000];\nint temp;\nint p=0;\nint main(){\n";
+		if (!flags.minimize) {
+			if(flags.accept_elvm) result += "#include<stdio.h>\n#define x tape[p]\nunsigned char tape[10000];\nint temp;\nint p=0;\nint main(){\n";
+			else result += "#include<stdio.h>\n#define x tape[p]\nunsigned char tape[1000000];\nint temp;\nint p=0;\nint main(){\n";
+		}
+		else {
+			if(flags.accept_elvm) result += "#include<stdio.h>\n#define x tape[p]\nunsigned char tape[10000];int temp;int p=0;int main(){";
+			else result += "#include<stdio.h>\n#define x tape[p]\nunsigned char tape[1000000];int temp;int p=0;int main(){";
+		}
 	}
 	else {
-		result += "#include<stdio.h>\nunsigned char x;\nint temp;\nint main(){\n";
+		if (!flags.minimize) result += "#include<stdio.h>\nunsigned char x;\nint temp;\nint main(){\n";
+		else result += "#include<stdio.h>\nunsigned char x;int temp;int main(){";
 	}
 	while (getline(s, line)) {
 		lines.push_back(line);
@@ -65,42 +77,42 @@ string generate(string code, generate_flags flags, vector<generate_error> &err )
 			continue;
 		}
 		if (l == "print") {
-			indent(result, "printf(\"%d \",(int)(x));", indentation);
+			indent(result, "printf(\"%d \",(int)(x));", indentation, flags.minimize);
 		}
 		else if (l == "input") {
-			indent(result, "scanf(\"%d\",&temp);", indentation);
-			indent(result, "x=temp;", indentation);
+			indent(result, "scanf(\"%d\",&temp);", indentation, flags.minimize);
+			indent(result, "x=temp;", indentation, flags.minimize);
 		}
 		else if (l == "infect person") {
-			indent(result, "++x;", indentation);
+			indent(result, (flags.accept_elvm? "x=x+1;": "++x;"), indentation, flags.minimize);
 		}
 		else if (l == "deinfect person") {
-			indent(result, "--x;", indentation);
+			indent(result, (flags.accept_elvm ? "x=x-1;" : "--x;"), indentation, flags.minimize);
 		}
 		else if (l == "bulk infect") {
-			indent(result, "x=getchar();", indentation);
+			indent(result, "x=getchar();", indentation, flags.minimize);
 		}
 		else if (l == "bulk deinfect") {
-			indent(result, "x=(x?1:0);", indentation);
+			indent(result, "x=(x?1:0);", indentation, flags.minimize);
 		}
 		else if (l == "check number of infections") {
-			indent(result, "putchar(x);", indentation);
+			indent(result, "putchar(x);", indentation, flags.minimize);
 		}
 		else if (l == "do") {
-			indent(result, "do{", indentation);
+			indent(result, "do{", indentation, flags.minimize);
 			++indentation;
 		}
 		else if (l == "else") {
 			if(!indentation) adderr(err, lineno, "Else without previous if");
 			else{
 				--indentation;
-				indent(result, "}else{", indentation);
+				indent(result, "}else{", indentation, flags.minimize);
 				++indentation;
 			}
 		}
 		else if (l == "loop") {
 			if (!indentation) adderr(err, lineno, "Loop does not match do");
-			else --indentation, indent(result, "}while(1);", indentation);
+			else --indentation, indent(result, "}while(1);", indentation, flags.minimize);
 		}
 		else if (startwith(l, "print ")) {
 			string printstring;
@@ -121,38 +133,38 @@ string generate(string code, generate_flags flags, vector<generate_error> &err )
 					}
 				}
 			}
-			indent(result, "printf(\""+printstring+"\");", indentation);
+			indent(result, "printf(\""+printstring+"\");", indentation, flags.minimize);
 		}
 		else if (l == "next house") {
 			if (!flags.plus) adderr(err, lineno, "This feature is only usable in WeeB++");
-			else indent(result, "++p;", indentation);
+			else indent(result, "++p;", indentation, flags.minimize);
 		}
 		else if (l == "previous house") {
 			if (!flags.plus) adderr(err, lineno, "This feature is only usable in WeeB++");
-			else indent(result, "--p;", indentation);
+			else indent(result, "--p;", indentation, flags.minimize);
 		}
 		else if (startwith(l,"start epidemic ")) {
-			if(flags.comment) indent(result, "// "+l.substr(15), indentation);
+			if(flags.comment) indent(result, "// "+l.substr(15), indentation, flags.minimize);
 		}
 		else if (startwith(l, "delevop vaccine ")) {
-			if (flags.plus) indent(result, "return 0;", indentation);
-			else if (flags.comment) indent(result, "// " + l.substr(16), indentation);
+			if (flags.plus) indent(result, "return 0;", indentation, flags.minimize);
+			else if (flags.comment) indent(result, "// " + l.substr(16), indentation, flags.minimize);
 		}
 		else if (l == "exit do") {
 			if (!flags.plus) adderr(err, lineno, "This feature is only usable in WeeB++");
-			else indent(result, "break;", indentation);
+			else indent(result, "break;", indentation, flags.minimize);
 		}
 		else if (l == "exit while") {
 			if (!flags.plus) adderr(err, lineno, "This feature is only usable in WeeB++");
-			else indent(result, "break;", indentation);
+			else indent(result, "break;", indentation, flags.minimize);
 		}
 		else if (l == "end if") {
 			if (!indentation) adderr(err, lineno, "Unmatched end if");
-			else --indentation, indent(result, "}", indentation);
+			else --indentation, indent(result, "}", indentation, flags.minimize);
 		}
 		else if (l == "end while") {
 			if (!indentation) adderr(err, lineno, "Unmatched end if");
-			else --indentation, indent(result, "}", indentation);
+			else --indentation, indent(result, "}", indentation, flags.minimize);
 		}
 		else if (startwith(l, "reinfect ")) {
 			splitstr(l, vals);
@@ -160,7 +172,7 @@ string generate(string code, generate_flags flags, vector<generate_error> &err )
 				adderr(err, lineno, "Syntax error");
 			}
 			else {
-				indent(result, "x=" + vals[1] + ";", indentation);
+				indent(result, "x=" + vals[1] + ";", indentation, flags.minimize);
 			}
 		}
 		else if (startwith(l, "if ")) {
@@ -172,7 +184,7 @@ string generate(string code, generate_flags flags, vector<generate_error> &err )
 				string op = vals[4];
 				if (op == "<>") op = "!=";
 				if (op == "=") op = "==";
-				indent(result, "if(x" + op + vals[5] + "){", indentation);
+				indent(result, "if(x" + op + vals[5] + "){", indentation, flags.minimize);
 				++indentation;
 			}
 		}
@@ -185,7 +197,7 @@ string generate(string code, generate_flags flags, vector<generate_error> &err )
 				string op = vals[4];
 				if (op == "<>") op = "!=";
 				if (op == "=") op = "==";
-				indent(result, "if(x" + op + vals[5] + "){", indentation);
+				indent(result, "if(x" + op + vals[5] + "){", indentation, flags.minimize);
 				++indentation;
 			}
 		}
@@ -199,7 +211,7 @@ string generate(string code, generate_flags flags, vector<generate_error> &err )
 				if (op == "<>") op = "!=";
 				if (op == "=") op = "==";
 				if (!indentation) adderr(err, lineno, "Loop does not match do");
-				else --indentation,indent(result, "}while(x" + op + vals[6] + ");", indentation);
+				else --indentation,indent(result, "}while(x" + op + vals[6] + ");", indentation, flags.minimize);
 			}
 		}
 		else {
@@ -207,7 +219,7 @@ string generate(string code, generate_flags flags, vector<generate_error> &err )
 		}
 		++lineno;
 	}
-	indent(result, "return 0;", indentation);
+	indent(result, "return 0;", indentation, flags.minimize);
 	result += "}";
 	return result;
 }
