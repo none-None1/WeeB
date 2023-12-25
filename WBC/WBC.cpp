@@ -8,7 +8,7 @@ int main(int argc, char* argv[])
 {
 	for (int i = 1; i < argc; i++) args.insert(string(argv[i]));
 	if (args.count("-h")) {
-		cout << "WBC - WeeB/WeeB++ compiler (transpiler to C)\nArguments:\n\t-h Help\n\t-p --plus Compile with WeeB++\n\t-c --comment Copy comments in program to output file\n\t-o Output file, default is standard output\n\t-m --minimize Minimize\n\t-e --accept-elvm Make programs acceptable by the ELVM compiler (WIP)\nExamples:\n\tHelp: wbc -h\n\tTranspile WeeB program 1.wb to 1.c: wbc 1.wb -o 1.c\n\tTranspile WeeB++ program 1.wbp to 1.c: wbc 1.wbp -o 1.c";
+		cout << "WBC - WeeB/WeeB++ compiler (transpiler to C)\nArguments:\n\t-h Help\n\t-p --plus Compile with WeeB++\n\t-c --comment Copy comments in program to output file\n\t-o Output file, default is standard output\n\t-m --minimize Minimize\n\t-e --accept-elvm Make programs acceptable by the ELVM compiler\nExamples:\n\tHelp: wbc -h\n\tTranspile WeeB program 1.wb to 1.c: wbc 1.wb -o 1.c\n\tTranspile WeeB++ program 1.wbp to 1.c: wbc 1.wbp -o 1.c";
 		return 0;
 	}
 	if (argc < 2) {

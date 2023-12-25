@@ -52,11 +52,11 @@ string generate(string code, generate_flags flags, vector<generate_error> &err )
 	int indentation = 1;
 	if (flags.plus) {
 		if (!flags.minimize) {
-			if(flags.accept_elvm) result += "#include<stdio.h>\n#define x tape[p]\nunsigned char tape[10000];\nint temp;\nint p=0;\nint main(){\n";
+			if(flags.accept_elvm) result += "#include<stdio.h>\n#define x tape[p]\nunsigned char tape[10000];\nint temp;\nint p=0;\n#include<ctype.h>\nint readint(){\n\tchar c;\n\tint r=0;\n\twhile(isspace(c=getchar()));\n\tr=c-48;\n\twhile(isdigit(c=getchar()))r=r*10+c-48;\n\treturn r;\n}\nint main(){\n";
 			else result += "#include<stdio.h>\n#define x tape[p]\nunsigned char tape[1000000];\nint temp;\nint p=0;\nint main(){\n";
 		}
 		else {
-			if(flags.accept_elvm) result += "#include<stdio.h>\n#define x tape[p]\nunsigned char tape[10000];int temp;int p=0;int main(){";
+			if(flags.accept_elvm) result += "#include<stdio.h>\n#include<ctype.h>\n#define x tape[p]\nunsigned char tape[10000];int temp;int p=0;int readint(){char c;int r=0;while(isspace(c=getchar()));r=c-48;while(isdigit(c=getchar()))r=r*10+c-48;return r;}int main(){";
 			else result += "#include<stdio.h>\n#define x tape[p]\nunsigned char tape[1000000];int temp;int p=0;int main(){";
 		}
 	}
@@ -80,7 +80,7 @@ string generate(string code, generate_flags flags, vector<generate_error> &err )
 			indent(result, "printf(\"%d \",(int)(x));", indentation, flags.minimize);
 		}
 		else if (l == "input") {
-			indent(result, "scanf(\"%d\",&temp);", indentation, flags.minimize);
+			indent(result, (flags.accept_elvm ? "temp=readint();" : "scanf(\"%d\",&temp);"), indentation, flags.minimize);
 			indent(result, "x=temp;", indentation, flags.minimize);
 		}
 		else if (l == "infect person") {
