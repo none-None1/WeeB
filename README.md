@@ -16,4 +16,7 @@ generate_flags can have:
 ```text
 plus: compile with WeeB++ instead of WeeB
 comment: Put comments in the original program to the transpiled program
+minimize: Minimize the code (Removes indentations and trim off the excess line feeds, thus resulting in shorter code)
 ```
+
+You can report bugs or suggestions by posting an issue.
