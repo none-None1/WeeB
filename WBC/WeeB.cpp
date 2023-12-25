@@ -197,7 +197,7 @@ string generate(string code, generate_flags flags, vector<generate_error> &err )
 				string op = vals[4];
 				if (op == "<>") op = "!=";
 				if (op == "=") op = "==";
-				indent(result, "if(x" + op + vals[5] + "){", indentation, flags.minimize);
+				indent(result, "while(x" + op + vals[5] + "){", indentation, flags.minimize);
 				++indentation;
 			}
 		}
