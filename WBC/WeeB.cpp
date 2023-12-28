@@ -49,6 +49,10 @@ string generate(string code, generate_flags flags, vector<generate_error> &err )
 	stringstream s(code);
 	string line,result;
 	vector<string> lines,vals;
+	stack<int> context;
+	const int DO = 0;
+	const int WHILE = 1;
+	const int IF = 2;
 	int indentation = 1;
 	if (flags.plus) {
 		if (!flags.minimize) {
@@ -100,10 +104,12 @@ string generate(string code, generate_flags flags, vector<generate_error> &err )
 		}
 		else if (l == "do") {
 			indent(result, "do{", indentation, flags.minimize);
+			context.push(DO);
 			++indentation;
 		}
 		else if (l == "else") {
 			if(!indentation) adderr(err, lineno, "Else without previous if");
+			else if(context.top()!=IF) adderr(err, lineno, "Else without previous if");
 			else{
 				--indentation;
 				indent(result, "}else{", indentation, flags.minimize);
@@ -112,7 +118,8 @@ string generate(string code, generate_flags flags, vector<generate_error> &err )
 		}
 		else if (l == "loop") {
 			if (!indentation) adderr(err, lineno, "Loop does not match do");
-			else --indentation, indent(result, "}while(1);", indentation, flags.minimize);
+			else if(context.top()!=DO) adderr(err, lineno, "Loop does not match do");
+			else --indentation, indent(result, "}while(1);", indentation, flags.minimize), context.pop();
 		}
 		else if (startwith(l, "print ")) {
 			string printstring;
@@ -152,19 +159,23 @@ string generate(string code, generate_flags flags, vector<generate_error> &err )
 		}
 		else if (l == "exit do") {
 			if (!flags.plus) adderr(err, lineno, "This feature is only usable in WeeB++");
+			else if (context.top() != DO) adderr(err, lineno, "Exit do is not in a do-while loop");
 			else indent(result, "break;", indentation, flags.minimize);
 		}
 		else if (l == "exit while") {
 			if (!flags.plus) adderr(err, lineno, "This feature is only usable in WeeB++");
+			else if (context.top() != WHILE) adderr(err, lineno, "Exit while is not in a while loop");
 			else indent(result, "break;", indentation, flags.minimize);
 		}
 		else if (l == "end if") {
 			if (!indentation) adderr(err, lineno, "Unmatched end if");
-			else --indentation, indent(result, "}", indentation, flags.minimize);
+			else if (context.top() != IF) adderr(err, lineno, "End if does not match if");
+			else --indentation, indent(result, "}", indentation, flags.minimize), context.pop();
 		}
 		else if (l == "end while") {
 			if (!indentation) adderr(err, lineno, "Unmatched end if");
-			else --indentation, indent(result, "}", indentation, flags.minimize);
+			else if (context.top() != IF) adderr(err, lineno, "End while does not match while");
+			else --indentation, indent(result, "}", indentation, flags.minimize), context.pop();
 		}
 		else if (startwith(l, "reinfect ")) {
 			splitstr(l, vals);
@@ -186,6 +197,7 @@ string generate(string code, generate_flags flags, vector<generate_error> &err )
 				if (op == "=") op = "==";
 				indent(result, "if(x" + op + vals[5] + "){", indentation, flags.minimize);
 				++indentation;
+				context.push(IF);
 			}
 		}
 		else if (startwith(l, "while ")) {
@@ -199,6 +211,7 @@ string generate(string code, generate_flags flags, vector<generate_error> &err )
 				if (op == "=") op = "==";
 				indent(result, "while(x" + op + vals[5] + "){", indentation, flags.minimize);
 				++indentation;
+				context.push(WHILE);
 			}
 		}
 		else if (startwith(l, "loop while ")) {
@@ -206,12 +219,13 @@ string generate(string code, generate_flags flags, vector<generate_error> &err )
 			if (vals.size() != 7 || vals[2] != "number" || vals[3] != "of" || vals[4] != "infections" || !excomp(vals[5]) || !exdigit(vals[6])) {
 				adderr(err, lineno, "Syntax error");
 			}
+			else if (context.top() != DO) adderr(err, lineno, "Loop does not match do");
 			else {
 				string op = vals[5];
 				if (op == "<>") op = "!=";
 				if (op == "=") op = "==";
 				if (!indentation) adderr(err, lineno, "Loop does not match do");
-				else --indentation,indent(result, "}while(x" + op + vals[6] + ");", indentation, flags.minimize);
+				else --indentation,indent(result, "}while(x" + op + vals[6] + ");", indentation, flags.minimize), context.pop();
 			}
 		}
 		else {

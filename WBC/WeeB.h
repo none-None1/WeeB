@@ -6,11 +6,13 @@
 #include<vector>
 #include<algorithm>
 #include<cctype>
+#include<stack>
 using std::getline;
 using std::string;
 using std::stringstream;
 using std::vector;
 using std::transform;
+using std::stack;
 struct generate_flags {
 	bool comment;
 	bool plus;
