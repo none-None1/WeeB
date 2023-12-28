@@ -174,7 +174,7 @@ string generate(string code, generate_flags flags, vector<generate_error> &err )
 		}
 		else if (l == "end while") {
 			if (!indentation) adderr(err, lineno, "Unmatched end if");
-			else if (context.top() != IF) adderr(err, lineno, "End while does not match while");
+			else if (context.top() != WHILE) adderr(err, lineno, "End while does not match while");
 			else --indentation, indent(result, "}", indentation, flags.minimize), context.pop();
 		}
 		else if (startwith(l, "reinfect ")) {
