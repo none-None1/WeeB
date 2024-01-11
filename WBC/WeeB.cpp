@@ -159,12 +159,12 @@ string generate(string code, generate_flags flags, vector<generate_error> &err )
 		}
 		else if (l == "exit do") {
 			if (!flags.plus) adderr(err, lineno, "This feature is only usable in WeeB++");
-			else if (context.top() != DO) adderr(err, lineno, "Exit do is not in a do-while loop");
+			else if (context.empty()||context.top() != DO) adderr(err, lineno, "Exit do is not in a do-while loop");
 			else indent(result, "break;", indentation, flags.minimize);
 		}
 		else if (l == "exit while") {
 			if (!flags.plus) adderr(err, lineno, "This feature is only usable in WeeB++");
-			else if (context.top() != WHILE) adderr(err, lineno, "Exit while is not in a while loop");
+			else if (context.empty()||context.top() != WHILE) adderr(err, lineno, "Exit while is not in a while loop");
 			else indent(result, "break;", indentation, flags.minimize);
 		}
 		else if (l == "end if") {
