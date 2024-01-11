@@ -109,7 +109,7 @@ string generate(string code, generate_flags flags, vector<generate_error> &err )
 		}
 		else if (l == "else") {
 			if(!indentation) adderr(err, lineno, "Else without previous if");
-			else if(context.top()!=IF) adderr(err, lineno, "Else without previous if");
+			else if(context.empty()||context.top()!=IF) adderr(err, lineno, "Else without previous if");
 			else{
 				--indentation;
 				indent(result, "}else{", indentation, flags.minimize);
@@ -118,7 +118,7 @@ string generate(string code, generate_flags flags, vector<generate_error> &err )
 		}
 		else if (l == "loop") {
 			if (!indentation) adderr(err, lineno, "Loop does not match do");
-			else if(context.top()!=DO) adderr(err, lineno, "Loop does not match do");
+			else if(context.empty()||context.top()!=DO) adderr(err, lineno, "Loop does not match do");
 			else --indentation, indent(result, "}while(1);", indentation, flags.minimize), context.pop();
 		}
 		else if (startwith(l, "print ")) {
@@ -169,12 +169,12 @@ string generate(string code, generate_flags flags, vector<generate_error> &err )
 		}
 		else if (l == "end if") {
 			if (!indentation) adderr(err, lineno, "Unmatched end if");
-			else if (context.top() != IF) adderr(err, lineno, "End if does not match if");
+			else if (context.empty()||context.top() != IF) adderr(err, lineno, "End if does not match if");
 			else --indentation, indent(result, "}", indentation, flags.minimize), context.pop();
 		}
 		else if (l == "end while") {
 			if (!indentation) adderr(err, lineno, "Unmatched end if");
-			else if (context.top() != WHILE) adderr(err, lineno, "End while does not match while");
+			else if (context.empty()||context.top() != WHILE) adderr(err, lineno, "End while does not match while");
 			else --indentation, indent(result, "}", indentation, flags.minimize), context.pop();
 		}
 		else if (startwith(l, "reinfect ")) {
@@ -219,7 +219,7 @@ string generate(string code, generate_flags flags, vector<generate_error> &err )
 			if (vals.size() != 7 || vals[2] != "number" || vals[3] != "of" || vals[4] != "infections" || !excomp(vals[5]) || !exdigit(vals[6])) {
 				adderr(err, lineno, "Syntax error");
 			}
-			else if (context.top() != DO) adderr(err, lineno, "Loop does not match do");
+			else if (context.empty()||context.top() != DO) adderr(err, lineno, "Loop does not match do");
 			else {
 				string op = vals[5];
 				if (op == "<>") op = "!=";
