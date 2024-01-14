@@ -1,15 +1,80 @@
 <!DOCTYPE html>
 <html>
-    <head><title>WeeB online IDE</title></head>
-    <body>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.css" />
-        <script type="module">
-            import { Terminal } from 'https://cdn.jsdelivr.net/npm/xterm/+esm';
-            var term=new Terminal();
-            term.open(document.getElementById('term'));
-            term.write('Hello from \x1B[1;3;31mxterm.js\x1B[0m $ ');
-            term.onData((val)=>{console.log(val.charCodeAt(0));term.write((val=='\r'?'\r\n':val))});
-        </script>
-    </body>
+
+<head>
+    <title>WeeB online IDE</title>
+    <script>location.reload=function(){}</script>
+    <script src="./mini-coi.js" scope="./"></script>
+</head>
+
+<body>
+    <link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/xterm@5.3.0/css/xterm.css" />
+    <script type="module">
+        var input='';
+        var cache='';
+        import { Terminal } from 'https://fastly.jsdelivr.net/npm/xterm/+esm';
+        var term = new Terminal();
+        term.open(document.getElementById('term'));
+        term.onData((val) => {
+            if(val=='\r'||val=='\n'){
+                var t=cache+'\n';
+                for(let i=1;i<=t.length;i++){
+                    ia[i]=t.charCodeAt(i-1);
+                }
+                ia[t.length+1]=0;
+                Atomics.store(ia,0,1);
+                Atomics.notify(ia,0,1);
+                ia[0]=0;
+                console.log('Send: '+cache);
+                cache='';
+                term.write('\r\n');
+            }else if(val.charCodeAt(0)==127){
+                if(input==''||input.split('\n')[input.split('\n').length-1]=='') ;
+                else{
+                    input=input.slice(0,input.length-1);
+                    cache=cache.slice(0,cache,length-1);
+                    term.write('\b \b');
+                }
+            }
+            else{
+                input+=(val == '\r' ? '\n' : (val=='\t'?'    ':val));
+                cache+=(val == '\r' ? '\n' : (val=='\t'?'    ':val));
+                term.write((val == '\r' ? '\r\n' : (val=='\t'?'    ':val))) ;
+            }
+        });
+        window.term=term;
+        term.write('Loading header files...\r\n');
+        var e=document.createElement('script');
+        e['src']='./elvm/headers.js';
+        document.body.appendChild(e);
+        term.write('done\r\n');
+    </script>
+    <script>
+        var wk=undefined;
+        var sab=new SharedArrayBuffer(1024);
+        var ia=new Int32Array(sab);
+        function run_code(){
+            if(!(wk === undefined)){
+                wk.terminate();
+            }
+            wk=new Worker('worker.js');
+            term.write('\x1bcWaiting for compilation...\r\n');
+            wk.onmessage=function(event){
+                term.write(event.data);
+            }
+            wk.postMessage({HEADERS: HEADERS,_code:document.getElementById('code').value,wbp:document.getElementById('wbp').checked,min:document.getElementById('min').checked,sab:sab});
+        }
+    </script>
     <div id="term"></div>
+    <input type="checkbox" id="wbp" >Compile with WeeB++<input type="checkbox" id="min" >Minimize generated C code<br>
+    <textarea rows="20" cols="50" placeholder="Code Here" id="code"></textarea>
+    <button onclick="run_code()">Run</button>
+    <p>
+        Tips:
+        <br>1. Click the run button, <b>DON'T</b> press any key on the terminal until you see <code>===START EXECUTION===</code>
+        <br>2. This IDE uses a <a href="https://webassembly.org">WebAssembly</a> binary of <a href="https://github.com/none-None1/WeeB">WBC</a>, compilation of C code is with <a href="https://github.com/shinh/elvm">ELVM</a>
+        <br>3. It is bad to use this on a slow (as the compiler in ELVM is extremely slow) or old (as it requires WebAssembly) browser.
+    </p>
+</body>
+
 </html>
