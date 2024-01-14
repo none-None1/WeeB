@@ -65,8 +65,8 @@ string generate(string code, generate_flags flags, vector<generate_error> &err )
 		}
 	}
 	else {
-		if (!flags.minimize) result += "#include<stdio.h>\nunsigned char x;\nint temp;\nint main(){\n";
-		else result += "#include<stdio.h>\nunsigned char x;int temp;int main(){";
+		if (!flags.minimize) result += "#include<stdio.h>\n#include<ctype.h>\nint readint(){\n\tchar c;\n\tint r=0;\n\twhile(isspace(c=getchar()));\n\tr=c-48;\n\twhile(isdigit(c=getchar()))r=r*10+c-48;\n\treturn r;\n}\nunsigned char x;\nint temp;\nint main(){\n";
+		else result += "#include<stdio.h>\n#include<ctype.h>\n#define x tape[p]\nunsigned char tape[10000];int temp;int p=0;int readint(){char c;int r=0;while(isspace(c=getchar()));r=c-48;while(isdigit(c=getchar()))r=r*10+c-48;return r;}\nunsigned char x;int temp;int main(){";
 	}
 	while (getline(s, line)) {
 		lines.push_back(line);
