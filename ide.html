@@ -43,17 +43,17 @@
             }
         });
         window.term=term;
-        term.write('Loading header files...\r\n');
-        var e=document.createElement('script');
-        e['src']='./elvm/headers.js';
-        document.body.appendChild(e);
-        term.write('done\r\n');
     </script>
     <script>
+        var HEADERS=null;
         var wk=undefined;
         var sab=new SharedArrayBuffer(1024);
         var ia=new Int32Array(sab);
         function run_code(){
+            if(HEADERS===null){
+                term.write('Header files not loaded, please wait a moment');
+                return;
+            }
             if(!(wk === undefined)){
                 wk.terminate();
             }
@@ -64,6 +64,12 @@
             }
             wk.postMessage({HEADERS: HEADERS,_code:document.getElementById('code').value,wbp:document.getElementById('wbp').checked,min:document.getElementById('min').checked,sab:sab});
         }
+        function stop_code(){
+            if(!(wk === undefined)){
+                wk.terminate();
+            }
+            wk=undefined;
+        }
     </script>
     <div id="term"></div>
     <input type="checkbox" id="wbp" >Compile with WeeB++<input type="checkbox" id="min" >Minimize generated C code<br>
@@ -71,10 +77,13 @@
     <button onclick="run_code()">Run</button>
     <p>
         Tips:
-        <br>1. Click the run button, <b>DON'T</b> press any key on the terminal until you see <code>===START EXECUTION===</code>
-        <br>2. This IDE uses a <a href="https://webassembly.org">WebAssembly</a> binary of <a href="https://github.com/none-None1/WeeB">WBC</a>, compilation of C code is with <a href="https://github.com/shinh/elvm">ELVM</a>
+        <br>1. Click the run button, <b>DON'T</b> press any key on the terminal until you see <code>===START EXECUTION===</code>.
+        <br>2. This IDE uses a <a href="https://webassembly.org">WebAssembly</a> binary of <a href="https://github.com/none-None1/WeeB">WBC</a>, compilation of C code is with <a href="https://github.com/shinh/elvm">ELVM</a>.
         <br>3. It is bad to use this on a slow (as the compiler in ELVM is extremely slow) or old (as it requires WebAssembly) browser.
+        <br>4. Please wait a moment before you run any code.
+        <br>5. Compilation starts 2 seconds after clicking the run button (for the WebAssembly module to load).
     </p>
+    <script src="./elvm/headers.js"></script>
 </body>
 
 </html>

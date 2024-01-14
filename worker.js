@@ -71,6 +71,9 @@ function run_code(){
     self.preprocessed=preprocessed;
     self.inp=0;
     _8cc(compile_getchar,putchar_string);
+    self.temp_output=temp_output.replace(/\x1b\[1;31m(\[.*?\])\x1b\[0m(.*)/g,function(a,b,c){
+        return '';
+    });
     self.inp=0;
     self.input=temp_output;
     self.irl=temp_output.length;
