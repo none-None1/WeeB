@@ -19,4 +19,8 @@ comment: Put comments in the original program to the transpiled program
 minimize: Minimize the code (Removes indentations and trim off the excess line feeds, thus resulting in shorter code)
 ```
 
+## Online IDE
+An online IDE for WeeB using asm.js
+ToDo:
+* Add permalinks
 You can report bugs or suggestions by posting an issue.
