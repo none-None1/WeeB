@@ -63,23 +63,27 @@ function term_putchar(x){
     self.postMessage(x==10?'\r\n':String.fromCharCode(x&255));
 }
 function run_code(){ 
-    self.compiledcode=compile();
-    if(!compiledcode){
-        return;
+    try{
+        self.compiledcode=compile();
+        if(!compiledcode){
+            return;
+        }
+        var preprocessed=preprocess(compiledcode);
+        self.preprocessed=preprocessed;
+        self.inp=0;
+        _8cc(compile_getchar,putchar_string);
+        self.temp_output=temp_output.replace(/\x1b\[1;31m(\[.*?\])\x1b\[0m(.*)/g,function(a,b,c){
+            return '';
+        });
+        self.inp=0;
+        self.input=temp_output;
+        self.irl=temp_output.length;
+        _eli(input_getchar,term_putchar);
+        self.postMessage('\r\n===EXECUTION TERMINATED===\r\n');
+        console.log('terminate');
+    }catch(e){
+        self.postMessage("JavaScript error: "+e+'\r\n');
     }
-    var preprocessed=preprocess(compiledcode);
-    self.preprocessed=preprocessed;
-    self.inp=0;
-    _8cc(compile_getchar,putchar_string);
-    self.temp_output=temp_output.replace(/\x1b\[1;31m(\[.*?\])\x1b\[0m(.*)/g,function(a,b,c){
-        return '';
-    });
-    self.inp=0;
-    self.input=temp_output;
-    self.irl=temp_output.length;
-    _eli(input_getchar,term_putchar);
-    self.postMessage('\r\n===EXECUTION TERMINATED===\r\n');
-    console.log('terminate');
 }
 self.onmessage=function(event){
     console.log('message');
