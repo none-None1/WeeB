@@ -12,7 +12,7 @@
     <script type="module">
         var input='';
         var cache='';
-        import { Terminal } from 'https://fastly.jsdelivr.net/npm/xterm/+esm';
+        import { Terminal } from 'https://fastly.jsdelivr.net/npm/xterm@5.3.0/+esm';
         var term = new Terminal();
         term.open(document.getElementById('term'));
         term.onData((val) => {
