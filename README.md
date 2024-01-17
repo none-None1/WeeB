@@ -23,5 +23,5 @@ minimize: Minimize the code (Removes indentations and trim off the excess line f
 An online IDE for WeeB using asm.js
 
 ToDo:
-* Add permalinks
+* ~~Add permalinks~~
 You can report bugs or suggestions by posting an issue.

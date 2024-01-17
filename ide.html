@@ -43,6 +43,17 @@
             }
         });
         window.term=term;
+        if(window.location.hash.slice(1)){
+            var debase64=atob(window.location.hash.slice(1).replaceAll('_','/').replaceAll('-','+'));
+            if(debase64[0]==='1'){
+                document.getElementById('wbp').checked=true;
+            }
+            if(debase64[1]==='1'){
+                document.getElementById('min').checked=true;
+            }
+            document.getElementById('code').value=debase64.slice(2);
+            run_code();
+        }
     </script>
     <script>
         if(((typeof SharedArrayBuffer)==='undefined')){
@@ -77,11 +88,19 @@
             wk=undefined;
             term.write('===STOPPED===\r\n');
         }
+        function permalink(){
+            var c=(document.getElementById('wbp').checked?'1':'0')+(document.getElementById('min').checked?'1':'0')+document.getElementById('code').value;
+            var link=window.location.href.slice(0,window.location.href.lastIndexOf('/'))+'/permalink.html#'+btoa(c).replaceAll('/','_').replaceAll('+','-');
+            var a=document.createElement('a');
+            a['href']=link;
+            a['target']='_blank';
+            a.click();
+        }
     </script>
     <div id="term"></div>
     <input type="checkbox" id="wbp" >Compile with WeeB++<input type="checkbox" id="min" >Minimize generated C code<br>
     <textarea rows="20" cols="50" placeholder="Code Here" id="code"></textarea>
-    <button onclick="run_code()">Run</button><button onclick="stop_code()">Stop</button>
+    <button onclick="run_code()">Run</button><button onclick="stop_code()">Stop</button><button onclick="permalink()">Permalink</button>
     <p>
         Tips:
         <br>1. Click the run button, <b>DON'T</b> press any key on the terminal until you see <code>===START EXECUTION===</code>.

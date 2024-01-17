@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head><title>Permalink</title></head>
+    <body>
+        <textarea readonly rows="20" cols="50" id="link"></textarea>
+        <button class="btn" data-clipboard-target="#link">Copy</button>
+        <script>
+            document.getElementById('link').value=window.location.href.slice(0,window.location.href.lastIndexOf('/'))+'/ide.html#'+window.location.hash.slice(1);
+        </script>
+        <script type="module">
+            import ClipboardJS from 'https://fastly.jsdelivr.net/npm/clipboard/+esm';
+            var clipboard=new ClipboardJS('.btn');
+            clipboard.on(
+                'success',
+                function(e){
+                    alert('Copyied successfully');
+                    e.clearSelection();
+                }
+            )
+            clipboard.on(
+                'error',
+                function(e){
+                    alert('Failed to copy');
+                    e.clearSelection();
+                }
+            )
+        </script>
+    </body>
+</html>
