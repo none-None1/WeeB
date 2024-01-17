@@ -1,3 +1,4 @@
+module=null;
 importScripts('./elvm/8cc.c.eir.js');
 var _8cc=main;
 importScripts('./elvm/eli.c.eir.js');
@@ -62,7 +63,12 @@ function putchar_string(x){
 function term_putchar(x){
     self.postMessage(x==10?'\r\n':String.fromCharCode(x&255));
 }
-function run_code(){ 
+function run_code(){
+    if(typeof Module.compile_weeb==='undefined'){
+        setTimeout(
+            run_code,2000
+        );
+    }
     try{
         self.compiledcode=compile();
         if(!compiledcode){
