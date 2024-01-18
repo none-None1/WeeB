@@ -56,9 +56,6 @@
         }
     </script>
     <script>
-        if(((typeof SharedArrayBuffer)==='undefined')){
-            alert('Warning, you browser does not support SharedArrayBuffer, this may make terminal input fail');
-        }
         var HEADERS=null;
         var wk=undefined;
         var sab=new SharedArrayBuffer(1024);
