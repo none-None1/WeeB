@@ -60,9 +60,6 @@
         var wk=undefined;
         var sab=new SharedArrayBuffer(1024);
         var ia=new Int32Array(sab);
-        if(((Object.prototype.toString.call(ia.buffer))!=='[object SharedArrayBuffer]')){
-            alert('Warning, you browser does not support SharedArrayBuffer, this may make terminal input fail');
-        }
         function run_code(){
             if(HEADERS===null){
                 term.write('Header files not loaded, please wait a moment');
