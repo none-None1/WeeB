@@ -63,33 +63,39 @@ function putchar_string(x){
 function term_putchar(x){
     self.postMessage(x==10?'\r\n':String.fromCharCode(x&255));
 }
-function run_code(){
+function run_code(progress){
+    self.postMessage('|');
+    for(let i=1;i<=progress;i++){
+        self.postMessage('#');
+    }
+    for(let i=1;i<=100-progress;i++){
+        self.postMessage(' ');
+    }
+    self.postMessage('|'+progress+'%\r');
     if(typeof Module.compile_weeb==='undefined'){
         setTimeout(
-            run_code,2000
+            ()=>{
+                run_code(Math.ceil(progress+(100-progress)/2))
+            },2000
         );
     }
-    try{
-        self.compiledcode=compile();
-        if(!compiledcode){
-            return;
-        }
-        var preprocessed=preprocess(compiledcode);
-        self.preprocessed=preprocessed;
-        self.inp=0;
-        _8cc(compile_getchar,putchar_string);
-        self.temp_output=temp_output.replace(/\x1b\[1;31m(\[.*?\])\x1b\[0m(.*)/g,function(a,b,c){
-            return '';
-        });
-        self.inp=0;
-        self.input=temp_output;
-        self.irl=temp_output.length;
-        _eli(input_getchar,term_putchar);
-        self.postMessage('\r\n===EXECUTION TERMINATED===\r\n');
-        console.log('terminate');
-    }catch(e){
-        self.postMessage("JavaScript error: "+e+'\r\n');
+    self.compiledcode=compile();
+    if(!compiledcode){
+        return;
     }
+    var preprocessed=preprocess(compiledcode);
+    self.preprocessed=preprocessed;
+    self.inp=0;
+    _8cc(compile_getchar,putchar_string);
+    self.temp_output=temp_output.replace(/\x1b\[1;31m(\[.*?\])\x1b\[0m(.*)/g,function(a,b,c){
+        return '';
+    });
+    self.inp=0;
+    self.input=temp_output;
+    self.irl=temp_output.length;
+    _eli(input_getchar,term_putchar);
+    self.postMessage('\r\n===EXECUTION TERMINATED===\r\n');
+    console.log('terminate');
 }
 self.onmessage=function(event){
     console.log('message');
@@ -101,5 +107,7 @@ self.onmessage=function(event){
     self.ia=new Int32Array(sab);
 }
 setTimeout(
-    run_code,2000
+    ()=>{
+        run_code(50)
+    },2000
 );
