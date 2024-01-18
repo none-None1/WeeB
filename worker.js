@@ -65,10 +65,10 @@ function term_putchar(x){
 }
 function run_code(progress){
     self.postMessage('|');
-    for(let i=1;i<=progress;i++){
+    for(let i=1;i<=progress/4;i++){
         self.postMessage('#');
     }
-    for(let i=1;i<=100-progress;i++){
+    for(let i=1;i<=25-progress/4;i++){
         self.postMessage(' ');
     }
     self.postMessage('|'+progress+'%\r');
